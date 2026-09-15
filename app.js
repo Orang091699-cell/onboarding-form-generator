@@ -173,7 +173,27 @@ function schedulePreview() {
 }
 
 function paragraphText(paragraph) { return [...paragraph.getElementsByTagNameNS("*", "t")].map(node => node.textContent || "").join(""); }
-function replaceParagraph(paragraph, value) { const nodes = [...paragraph.getElementsByTagNameNS("*", "t")]; nodes[0].textContent = value; nodes.slice(1).forEach(node => node.textContent = ""); }
+function setCharacterSpacing(textNode, value) {
+  const run = textNode.parentElement;
+  if (!run || run.localName !== "r") return;
+  let properties = elementChildren(run, "rPr")[0];
+  if (!properties) {
+    properties = textNode.ownerDocument.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:rPr");
+    run.insertBefore(properties, run.firstChild);
+  }
+  let spacing = elementChildren(properties, "spacing")[0];
+  if (!spacing) {
+    spacing = textNode.ownerDocument.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:spacing");
+    properties.append(spacing);
+  }
+  spacing.setAttributeNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:val", String(value));
+}
+function replaceParagraph(paragraph, value) {
+  const nodes = [...paragraph.getElementsByTagNameNS("*", "t")];
+  nodes[0].textContent = value;
+  setCharacterSpacing(nodes[0], 0);
+  nodes.slice(1).forEach(node => node.textContent = "");
+}
 function replaceAfterLabel(paragraph, label, value) {
   const nodes = [...paragraph.getElementsByTagNameNS("*", "t")], labelIndex = nodes.findIndex(node => (node.textContent || "").includes(label));
   if (labelIndex < 0) throw new Error(`Word 模板缺少字段：${label}`);
