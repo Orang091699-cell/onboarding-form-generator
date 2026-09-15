@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>入职确认单生成器</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-mark" aria-hidden="true">M</div>
+    <div>
+      <div class="brand">ModelBest 人力资源</div>
+      <div class="product">入职确认单生成器</div>
+    </div>
+    <div class="local-badge"><span></span>仅在本机处理</div>
+  </header>
+
+  <main>
+    <section class="workspace">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">花名册导入</p>
+          <h1>生成待打印确认单</h1>
+        </div>
+        <div class="step-indicator"><strong>1</strong><span></span><strong>2</strong><span></span><strong>3</strong></div>
+      </div>
+
+      <label class="dropzone" id="dropzone" for="fileInput">
+        <input id="fileInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+        <span class="upload-icon" aria-hidden="true">↑</span>
+        <strong id="dropTitle">拖入花名册，或点击选择</strong>
+        <small id="dropHint">支持 .xlsx，数据仅在当前浏览器内处理</small>
+        <button class="remove-file" id="removeFile" type="button" aria-label="移除文件" title="移除文件">×</button>
+      </label>
+
+      <div class="filters">
+        <label>
+          <span>开始日期</span>
+          <input id="startDateInput" type="date">
+        </label>
+        <label>
+          <span>结束日期</span>
+          <input id="endDateInput" type="date">
+        </label>
+        <label>
+          <span>日期依据</span>
+          <select id="dateColumn">
+            <option value="司龄起算日期">司龄起算日期</option>
+            <option value="入职日期">入职日期</option>
+          </select>
+        </label>
+        <label>
+          <span>工号前缀</span>
+          <input id="prefixInput" type="text" value="E" maxlength="8" placeholder="例如 E">
+        </label>
+        <label>
+          <span>人员类型</span>
+          <select id="employeeType"><option value="全部">全部</option></select>
+        </label>
+        <label>
+          <span>HR 确认人</span>
+          <input id="hrNameInput" type="text" placeholder="请输入 HR 姓名">
+        </label>
+      </div>
+
+      <div class="status-row">
+        <div id="statusText">选择花名册后，将自动预览匹配人员。</div>
+        <button class="secondary" id="refreshButton" type="button" disabled><span aria-hidden="true">↻</span>刷新名单</button>
+      </div>
+    </section>
+
+    <section class="results" aria-live="polite">
+      <div class="result-head">
+        <div>
+          <p class="eyebrow">打印名单</p>
+          <h2>已匹配 <span id="matchCount">0</span> 人</h2>
+        </div>
+        <div class="summary-pills">
+          <span id="sortPill">按工号升序</span>
+          <span>每人 1 页</span>
+        </div>
+      </div>
+
+      <div class="empty-state" id="emptyState">
+        <div class="empty-sheet" aria-hidden="true"><i></i><i></i><i></i></div>
+        <strong>等待导入花名册</strong>
+        <span>匹配员工会按工号顺序显示在这里</span>
+      </div>
+
+      <div class="table-wrap" id="tableWrap" hidden>
+        <table>
+          <thead><tr><th>打印顺序</th><th>工号</th><th>确认单姓名</th><th>入职日期</th><th>人员类型</th><th>合同编号</th></tr></thead>
+          <tbody id="resultBody"></tbody>
+        </table>
+      </div>
+
+      <div class="error-box" id="errorBox" hidden></div>
+
+      <footer class="actionbar">
+        <div>
+          <strong id="outputSummary">尚未准备生成</strong>
+          <span>输出为 Word 文档，可直接批量打印</span>
+        </div>
+        <button class="primary" id="generateButton" type="button" disabled>
+          <span aria-hidden="true">↓</span><span id="generateLabel">生成并下载确认单</span>
+        </button>
+      </footer>
+    </section>
+  </main>
+
+  <script src="./jszip.min.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
